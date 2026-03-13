@@ -7,9 +7,7 @@
 
       <NFormItem label="Mot de passe" path="password">
         <NInput
-          type="password"
-          v-model:value="form.password"
-          placeholder="Votre mot de passe"
+           v-model:value="form.password" type="password" placeholder="Votre mot de passe"
         />
       </NFormItem>
 
@@ -36,10 +34,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/store/auth'
-import { ROUTES } from '@/router'
-import type { SignInPayload } from '@/types'
+
 import { useApi } from '@/composables/useApi'
+import { ROUTES } from '@/router'
+import { useAuthStore } from '@/store/auth'
+import type { SignInPayload } from '@/types'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -78,7 +77,7 @@ const handleSubmit = async () => {
     authStore.login(response.token, response.user)
 
     router.push(ROUTES.HOME)
-  } catch (_err: any) {
+  } catch (_err: unknown) {
     errorMessage.value = 'Identifiants incorrects' // RG3
   } finally {
     loading.value = false // RG2
