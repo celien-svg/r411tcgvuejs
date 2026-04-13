@@ -1,44 +1,50 @@
 <template>
   <div class="home">
-    <div class="header">
-      <h1>Mes decks</h1>
+    <section class="home-lobby">
+      <Lobby />
+    </section>
 
-      <NButton type="primary" size="large" @click="goCreate">
-        Créer un deck
-      </NButton>
-    </div>
+    <section class="decks-section">
+      <div class="decks-header">
+        <h1>Mes decks</h1>
 
-    <NGrid :cols="3" :x-gap="16" :y-gap="16">
-      <NGi v-for="deck in decks" :key="deck.id">
-        <NCard :title="deck.name" size="large">
-          <div class="cards-preview">
-            <img
-              v-for="card in deck.cards"
-              :key="card.id"
-              :src="card.imgUrl"
-              class="card-thumb"
-            />
-          </div>
+        <NButton type="primary" size="large" @click="goCreate">
+          Créer un deck
+        </NButton>
+      </div>
 
-          <template #action>
-            <div class="deck-actions">
-              <NButton size="small" @click="goDetail(deck.id)">Voir</NButton>
-              <NButton size="small" @click="goEdit(deck.id)">Modifier</NButton>
-              <NButton size="small" type="error" @click="remove(deck.id)">Supprimer</NButton>
+      <NGrid :cols="3" :x-gap="16" :y-gap="16">
+        <NGi v-for="deck in decks" :key="deck.id">
+          <NCard :title="deck.name" size="large">
+            <div class="cards-preview">
+              <img
+                v-for="card in deck.cards"
+                :key="card.id"
+                :src="card.imgUrl"
+                class="card-thumb"
+              />
             </div>
-          </template>
-        </NCard>
-      </NGi>
-    </NGrid>
+
+            <template #action>
+              <div class="deck-actions">
+                <NButton size="small" @click="goDetail(deck.id)">Voir</NButton>
+                <NButton size="small" @click="goEdit(deck.id)">Modifier</NButton>
+                <NButton size="small" type="error" @click="remove(deck.id)">Supprimer</NButton>
+              </div>
+            </template>
+          </NCard>
+        </NGi>
+      </NGrid>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted,ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+import Lobby from '@/components/lobby/Lobby.vue'
 import { useApi } from '@/composables/useApi'
-import { ROUTES } from '@/router'
 import type { Deck } from '@/types'
 
 const router = useRouter()
@@ -55,7 +61,7 @@ onMounted(async () => {
 })
 
 const goCreate = () => {
-  router.push(ROUTES.DECK_CREATE)
+  router.push('/decks/create')
 }
 
 const goDetail = (id: number) => {
@@ -79,14 +85,18 @@ const remove = async (id: number) => {
   padding: 32px 24px;
 }
 
-.header {
+.home-lobby {
+  margin-bottom: 40px;
+}
+
+.decks-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
 }
 
-.header h1 {
+.decks-header h1 {
   font-size: 32px;
   font-weight: 700;
   margin: 0;

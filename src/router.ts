@@ -4,6 +4,7 @@ import CreateDeckPage from '@/pages/CreateDeckPage.vue'
 import DeckDetailPage from '@/pages/DeckDetailPage.vue'
 import EditDeckPage from '@/pages/EditDeckPage.vue'
 
+import GamePage from './pages/GamePage.vue'
 import HomePage from './pages/HomePage.vue'
 import LoginPage from './pages/LoginPage.vue'
 import RegisterPage from './pages/RegisterPage.vue'
@@ -16,6 +17,7 @@ export const ROUTES = {
   DECK_CREATE: '/decks/create',
   DECK_DETAIL: (id: number | string) => `/decks/${id}`,
   DECK_EDIT: (id: number | string) => `/decks/${id}/edit`,
+  GAME: '/game',
 } as const
 
 const routes = [
@@ -35,6 +37,11 @@ const routes = [
   {
     path: '/decks/:id/edit',
     component: EditDeckPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: ROUTES.GAME,
+    component: GamePage,
     meta: { requiresAuth: true },
   },
 ]
