@@ -45,7 +45,9 @@ const allCards = ref<Card[]>([])
 const deckCards = computed<Card[]>(() => {
   if (!deck.value || allCards.value.length === 0) return []
   return deck.value.cards
-    .map((entry: unknown) => allCards.value.find((c) => c.id === entry.cardId))
+    .map((entry: unknown) =>
+      allCards.value.find((c) => c.id === (entry as { cardId: number }).cardId),
+    )
     .filter(Boolean) as Card[]
 })
 
