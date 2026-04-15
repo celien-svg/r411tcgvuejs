@@ -92,7 +92,7 @@
         <div v-else class="placeholder">
           <div class="placeholder-inner">
             <span class="placeholder-icon">?</span>
-            <span>Aucune carte active</span>
+            <span>Aucunes cartes actives</span>
           </div>
         </div>
       </div>
