@@ -66,7 +66,9 @@ onMounted(async () => {
   await nextTick()
 
   // 3) On récupère les vrais cardId (pas les id de jointure)
-  selected.value = (deck.cards as unknown[]).map((entry) => entry.cardId)
+  selected.value = (deck.cards as unknown[]).map(
+    (entry) => (entry as { cardId: number }).cardId,
+  )
 })
 
 const save = async () => {
