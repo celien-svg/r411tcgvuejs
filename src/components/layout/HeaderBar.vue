@@ -28,7 +28,16 @@
       <NSpace align="center" :size="16">
         <template v-if="isAuthenticated">
           <NText depth="3">Connecté en tant que {{ user?.username }}</NText>
-          <NButton size="small" @click="() => {authStore.logout(); goToLogin()}">Déconnexion</NButton>
+          <NButton
+            size="small"
+            @click="
+              () => {
+                authStore.logout()
+                goToLogin()
+              }
+            "
+            >Déconnexion</NButton
+          >
         </template>
 
         <template v-else>
@@ -45,7 +54,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 

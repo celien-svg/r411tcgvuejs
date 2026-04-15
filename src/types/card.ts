@@ -26,6 +26,7 @@ export interface Card {
   type: PokemonType
   pokedexNumber: number
   imgUrl: string
+  typeColor: string
 }
 
 export interface DeckCard {
