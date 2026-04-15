@@ -7,7 +7,9 @@
 
       <NFormItem label="Mot de passe" path="password">
         <NInput
-           v-model:value="form.password" type="password" placeholder="Votre mot de passe"
+          v-model:value="form.password"
+          type="password"
+          placeholder="Votre mot de passe"
         />
       </NFormItem>
 
@@ -15,17 +17,13 @@
         {{ errorMessage }}
       </NAlert>
 
-      <NButton
-        type="primary"
-        block
-        :loading="loading"
-        @click="handleSubmit"
-      >
+      <NButton type="primary" block :loading="loading" @click="handleSubmit">
         Se connecter
       </NButton>
 
       <NSpace justify="center" style="margin-top: 12px">
-        Pas encore de compte ? <RouterLink :to="ROUTES.REGISTER">S'inscrire</RouterLink>
+        Pas encore de compte ?
+        <RouterLink :to="ROUTES.REGISTER">S'inscrire</RouterLink>
       </NSpace>
     </NForm>
   </NCard>
@@ -44,24 +42,20 @@ const router = useRouter()
 const authStore = useAuthStore()
 const api = useApi()
 
-
 //RG1
 
 const form = ref<SignInPayload>({
   email: '',
-  password: ''
+  password: '',
 })
 
 const rules = {
   email: { required: true, message: 'Email requis', trigger: 'blur' },
-  password: { required: true, message: 'Mot de passe requis', trigger: 'blur' }
+  password: { required: true, message: 'Mot de passe requis', trigger: 'blur' },
 }
-
-
 
 const loading = ref(false)
 const errorMessage = ref('')
-
 
 //RG2, RG3, RG4
 
@@ -72,7 +66,6 @@ const handleSubmit = async () => {
   try {
     // Appel API réel
     const response = await api.signIn(form.value)
-
 
     authStore.login(response.token, response.user)
 

@@ -28,8 +28,12 @@
             <template #action>
               <div class="deck-actions">
                 <NButton size="small" @click="goDetail(deck.id)">Voir</NButton>
-                <NButton size="small" @click="goEdit(deck.id)">Modifier</NButton>
-                <NButton size="small" type="error" @click="remove(deck.id)">Supprimer</NButton>
+                <NButton size="small" @click="goEdit(deck.id)"
+                  >Modifier</NButton
+                >
+                <NButton size="small" type="error" @click="remove(deck.id)"
+                  >Supprimer</NButton
+                >
               </div>
             </template>
           </NCard>
