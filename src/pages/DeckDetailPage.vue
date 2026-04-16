@@ -1,33 +1,38 @@
 <template>
-  <NCard :title="deck?.name" style="max-width: 800px; margin: auto">
-    <div class="actions">
-      <NButton type="primary" @click="goEdit">Modifier</NButton>
-      <NButton @click="resetHp">Réinitialiser les PV</NButton>
-    </div>
+  <div class="page-wrapper">
+    <NCard :title="deck?.name" class="form-card">
+      <div class="actions">
+        <NButton type="primary" @click="goEdit">Modifier</NButton>
+        <NButton @click="resetHp">Réinitialiser les PV</NButton>
+      </div>
 
-    <NDivider />
+      <NDivider />
 
-    <div v-if="deckCards.length > 0" class="cards-wrapper">
-      <div v-for="card in deckCards" :key="card.id" class="card-entry">
-        <CardItem
-          :card="card"
-          :selectable="false"
-          :current-hp="currentHp[card.id]"
-          size="md"
-        />
-        <div class="hp-controls">
-          <NButton size="small" @click="changeHp(card.id, -10)">-10</NButton>
-          <NButton size="small" @click="changeHp(card.id, -1)">-1</NButton>
-          <span class="hp-value">{{ currentHp[card.id] }} / {{ card.hp }}</span>
-          <NButton size="small" @click="changeHp(card.id, +1)">+1</NButton>
-          <NButton size="small" @click="changeHp(card.id, +10)">+10</NButton>
+      <div v-if="deckCards.length > 0" class="cards-wrapper">
+        <div v-for="card in deckCards" :key="card.id" class="card-entry">
+          <CardItem
+            :card="card"
+            :selectable="false"
+            :current-hp="currentHp[card.id]"
+            size="md"
+          />
+          <div class="hp-controls">
+            <NButton size="small" @click="changeHp(card.id, -10)">-10</NButton>
+            <NButton size="small" @click="changeHp(card.id, -1)">-1</NButton>
+            <span class="hp-value"
+              >{{ currentHp[card.id] }} / {{ card.hp }}</span
+            >
+            <NButton size="small" @click="changeHp(card.id, +1)">+1</NButton>
+            <NButton size="small" @click="changeHp(card.id, +10)">+10</NButton>
+          </div>
         </div>
       </div>
-    </div>
-  </NCard>
+    </NCard>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { NButton, NCard, NDivider } from 'naive-ui'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -69,15 +74,12 @@ const resetHp = () => initHp()
 
 onMounted(async () => {
   const deckId = route.params.id as string
-
   const [deckData, cards] = await Promise.all([
     api.getDeck(deckId),
     api.getCards(),
   ])
-
   deck.value = deckData
   allCards.value = cards
-
   initHp()
 })
 
@@ -85,15 +87,30 @@ const goEdit = () => router.push(`/decks/${route.params.id}/edit`)
 </script>
 
 <style scoped>
+/* RG3 : pleine largeur mobile, max-width desktop */
+.page-wrapper {
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
   margin-bottom: 12px;
 }
 
+/* RG1 : grille adaptative */
 .cards-wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 16px;
 }
 
@@ -108,6 +125,8 @@ const goEdit = () => router.push(`/decks/${route.params.id}/edit`)
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .hp-value {
@@ -115,5 +134,19 @@ const goEdit = () => router.push(`/decks/${route.params.id}/edit`)
   min-width: 70px;
   text-align: center;
   font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .page-wrapper {
+    padding: 0 8px;
+  }
+
+  .cards-wrapper {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .hp-controls {
+    gap: 2px;
+  }
 }
 </style>

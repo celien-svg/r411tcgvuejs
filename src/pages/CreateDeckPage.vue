@@ -1,37 +1,42 @@
 <template>
-  <NCard title="Créer un deck" style="max-width: 800px; margin: auto">
-    <NForm>
-      <NFormItem label="Nom du deck">
-        <NInput v-model:value="name" />
-      </NFormItem>
+  <!-- RG3 : pleine largeur mobile, contrainte sur grand écran -->
+  <div class="page-wrapper">
+    <NCard title="Créer un deck" class="form-card">
+      <NForm>
+        <NFormItem label="Nom du deck">
+          <NInput v-model:value="name" placeholder="Nom du deck" />
+        </NFormItem>
 
-      <NDivider />
+        <NDivider />
 
-      <div class="top-bar">
-        <div class="counter">{{ selected.length }} / 10 cartes</div>
-      </div>
-      <CardGrid
-        v-model:model-value="selected"
-        :cards="cards"
-        :max-selected="10"
-        :size="gridSize"
-        :selectable="true"
-      />
+        <div class="top-bar">
+          <div class="counter">{{ selected.length }} / 10 cartes</div>
+        </div>
 
-      <NButton
-        type="primary"
-        block
-        :disabled="selected.length !== 10 || !name"
-        @click="submit"
-      >
-        Créer
-      </NButton>
-    </NForm>
-  </NCard>
+        <CardGrid
+          v-model:model-value="selected"
+          :cards="cards"
+          :max-selected="10"
+          :size="gridSize"
+          :selectable="true"
+        />
+
+        <NButton
+          type="primary"
+          block
+          style="margin-top: 16px"
+          :disabled="selected.length !== 10 || !name"
+          @click="submit"
+        >
+          Créer
+        </NButton>
+      </NForm>
+    </NCard>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { NButton } from 'naive-ui'
+import { NButton, NCard, NDivider, NForm, NFormItem, NInput } from 'naive-ui'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -59,8 +64,32 @@ const submit = async () => {
 </script>
 
 <style scoped>
+/* RG3 : pleine largeur sur mobile, max-width sur desktop */
+.page-wrapper {
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .counter {
-  margin-bottom: 12px;
   font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.top-bar {
+  margin-bottom: 12px;
+}
+
+/* Sur mobile : padding réduit dans la card */
+@media (max-width: 640px) {
+  .page-wrapper {
+    padding: 0 8px;
+  }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
-  // manque le RG3
   <div class="deck-list">
-    <NGrid :cols="3" :x-gap="16" :y-gap="16">
+    <!-- RG2 : 1 colonne mobile → 2 tablette → 3 desktop -->
+    <NGrid responsive="screen" cols="1 s:2 m:3" :x-gap="16" :y-gap="16">
       <NGi v-for="d in decks" :key="d.id">
         <NCard :title="d.name" size="large">
           <div class="cards-preview">
@@ -27,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+import { NButton, NCard, NGi, NGrid } from 'naive-ui'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 

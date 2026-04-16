@@ -15,10 +15,9 @@
       </span>
     </div>
 
-    <div v-if="error" class="error">
-      {{ error }}
-    </div>
+    <div v-if="error" class="error">{{ error }}</div>
 
+    <!-- Responsive : 1 colonne mobile, 2 colonnes desktop -->
     <div class="lobby-grid">
       <NCard title="Créer une partie" class="panel-card" size="large">
         <div class="panel-content">
@@ -36,6 +35,7 @@
           <div class="actions">
             <NButton
               type="primary"
+              block
               :disabled="!selectedDeckId || !isConnected"
               @click="createRoom"
             >
@@ -59,7 +59,7 @@
           >
             <div class="room-info">
               <div class="room-name">{{ room.name }}</div>
-              <div class="room-host">Hôte: {{ room.hostUsername }}</div>
+              <div class="room-host">Hôte : {{ room.hostUsername }}</div>
               <div class="room-status">
                 {{ room.status === 'waiting' ? 'En attente' : 'En cours' }}
               </div>
@@ -101,10 +101,7 @@ const selectedDeckId = ref<number | null>(null)
 const decks = ref<Deck[]>([])
 
 const deckOptions = computed(() =>
-  decks.value.map((deck) => ({
-    label: deck.name,
-    value: deck.id,
-  })),
+  decks.value.map((deck) => ({ label: deck.name, value: deck.id })),
 )
 
 const isConnected = computed(() => gameStore.isConnected)
@@ -116,23 +113,17 @@ async function loadDecks() {
 }
 
 function createRoom() {
-  if (selectedDeckId.value) {
-    gameStore.createRoom(selectedDeckId.value)
-  }
+  if (selectedDeckId.value) gameStore.createRoom(selectedDeckId.value)
 }
 
 function joinRoom(roomId: string) {
-  if (selectedDeckId.value) {
-    gameStore.joinRoom(roomId, selectedDeckId.value)
-  }
+  if (selectedDeckId.value) gameStore.joinRoom(roomId, selectedDeckId.value)
 }
 
 watch(
   () => gameStore.gameState,
   (next) => {
-    if (next) {
-      router.push('/game')
-    }
+    if (next) router.push('/game')
   },
 )
 
@@ -155,6 +146,7 @@ onMounted(async () => {
   align-items: flex-start;
   gap: 16px;
   margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 
 .lobby-header h2 {
@@ -172,22 +164,29 @@ onMounted(async () => {
   border-radius: 999px;
   font-size: 14px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .connection-status.online {
   background: #e6ffed;
   color: #1f9d55;
 }
-
 .connection-status.offline {
   background: #ffe6e9;
   color: #c9190b;
 }
 
+/* RG2 : 1 col mobile, 2 col desktop */
 .lobby-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 20px;
+}
+
+@media (min-width: 640px) {
+  .lobby-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .panel-card {
@@ -244,5 +243,12 @@ onMounted(async () => {
 .room-status {
   color: #666;
   font-size: 13px;
+}
+
+/* ── Mobile ────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .lobby-header h2 {
+    font-size: 20px;
+  }
 }
 </style>

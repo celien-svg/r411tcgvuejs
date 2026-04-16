@@ -1,6 +1,6 @@
 <template>
   <div class="game-page">
-    <!--  Zone adversaire  -->
+    <!-- Zone adversaire -->
     <div class="game-zone opponent-zone">
       <div class="zone-header">
         <span class="zone-label">Adversaire</span>
@@ -33,8 +33,7 @@
               />
             </div>
             <div class="hp-text">
-              {{ opponent?.hp ?? 0 }}/{{ opponentCard.hp }}
-              &nbsp;·&nbsp;
+              ❤ {{ opponent?.hp ?? 0 }}/{{ opponentCard.hp }} &nbsp;·&nbsp; ⚔
               {{ opponentCard.attack }}
             </div>
           </div>
@@ -92,12 +91,12 @@
         <div v-else class="placeholder">
           <div class="placeholder-inner">
             <span class="placeholder-icon">?</span>
-            <span>Aucunes cartes actives</span>
+            <span>Aucune carte active</span>
           </div>
         </div>
       </div>
 
-      <!-- Main du joueur (injecte getCardById via provide) -->
+      <!-- Main du joueur -->
       <PlayerHand />
     </div>
 
@@ -116,8 +115,6 @@ import { useApi } from '@/composables/useApi'
 import { useGameStore } from '@/store/game'
 import type { Card } from '@/types'
 
-//  Store / router
-
 const router = useRouter()
 const gameStore = useGameStore()
 const api = useApi()
@@ -125,8 +122,6 @@ const api = useApi()
 const gameState = computed(() => gameStore.gameState)
 const player = computed(() => gameState.value?.player ?? null)
 const opponent = computed(() => gameState.value?.opponent ?? null)
-
-//  Cards cache
 
 const cards = ref<Card[]>([])
 
@@ -141,34 +136,24 @@ const FALLBACK_CARD: Card = {
   typeColor: '#aaa',
 }
 
-/**
- * Résout une carte par son id.
- * La fonction est déclarée ici (niveau racine du setup) pour que provide()
- * puisse être appelé de façon synchrone — obligation de Vue 3.
- * Comme cards est un ref réactif, les composants enfants obtiendront
- * automatiquement les bonnes données après le chargement async.
- */
 function getCardById(id: number): Card {
   return cards.value.find((c) => c.id === id) ?? FALLBACK_CARD
 }
 
-// provide() doit être SYNCHRONE au niveau racine du setup (pas dans onMounted)
 provide('getCardById', getCardById)
 
-//  Computed active cards
-
 const playerCard = computed<Card | null>(() =>
-  player.value?.activeCard !== undefined
+  player.value?.activeCard !== null && player.value?.activeCard !== undefined
     ? getCardById(player.value.activeCard)
     : null,
 )
 
 const opponentCard = computed<Card | null>(() =>
+  opponent.value?.activeCard !== null &&
   opponent.value?.activeCard !== undefined
     ? getCardById(opponent.value.activeCard)
     : null,
 )
-
 const playerHpPercent = computed(() => {
   if (!playerCard.value || playerCard.value.hp === 0) return 0
   return Math.max(
@@ -176,7 +161,6 @@ const playerHpPercent = computed(() => {
     Math.min(100, ((player.value?.hp ?? 0) / playerCard.value.hp) * 100),
   )
 })
-
 const opponentHpPercent = computed(() => {
   if (!opponentCard.value || opponentCard.value.hp === 0) return 0
   return Math.max(
@@ -185,14 +169,11 @@ const opponentHpPercent = computed(() => {
   )
 })
 
-//  Lifecycle
-
 onMounted(async () => {
   if (!gameState.value) {
     router.push('/')
     return
   }
-  // Mise à jour réactive : computed + PlayerHand se recalculent automatiquement
   cards.value = await api.getCards()
 })
 </script>
@@ -217,19 +198,22 @@ onMounted(async () => {
   flex-direction: column;
   height: 100vh;
   background: var(--clr-bg);
-  overflow: hidden;
+  /* RG4 : scroll vertical autorisé sur mobile si le contenu dépasse */
+  overflow-y: auto;
 }
 
 /*  Zones  */
 .game-zone {
   flex: 1;
+  /* RG4 : hauteur minimale pour rester lisible sur petit écran */
+  min-height: 160px;
   display: flex;
   flex-direction: column;
   background: var(--clr-zone);
   border: 1.5px solid var(--clr-border);
   border-radius: var(--radius);
-  margin: 8px 12px;
-  padding: 12px 16px;
+  margin: 6px 8px;
+  padding: 10px 12px;
   overflow: hidden;
 }
 
@@ -245,12 +229,12 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .zone-label {
   font-weight: 900;
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--clr-label);
@@ -260,7 +244,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--clr-label);
 }
@@ -271,6 +255,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 0;
 }
 
 /*  Active card  */
@@ -279,11 +264,11 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: #f8fafc;
   border: 1.5px solid var(--clr-border);
   border-radius: 12px;
-  min-width: 130px;
+  min-width: 110px;
   animation: card-in 0.3s ease;
 }
 
@@ -299,43 +284,41 @@ onMounted(async () => {
 }
 
 .card-number {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--clr-label);
   font-weight: 700;
-  letter-spacing: 0.04em;
 }
 
 .card-img {
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.12));
 }
 
 .card-name {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 900;
   color: var(--clr-text);
 }
 
 .type-badge {
   display: inline-block;
-  padding: 2px 10px;
+  padding: 2px 8px;
   border-radius: 20px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: #fff;
-  letter-spacing: 0.03em;
 }
 
 /*  HP bar  */
 .hp-bar-wrapper {
   width: 100%;
-  height: 7px;
+  height: 6px;
   background: #e2e8f0;
   border-radius: 99px;
   overflow: hidden;
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .hp-bar-fill {
@@ -352,19 +335,19 @@ onMounted(async () => {
 }
 
 .hp-text {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--clr-label);
   margin-top: 2px;
 }
 
-/*  Placeholder  */
+/* ── Placeholder  */
 .placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 80px;
+  min-height: 60px;
 }
 
 .placeholder-inner {
@@ -373,20 +356,68 @@ onMounted(async () => {
   align-items: center;
   gap: 6px;
   color: var(--clr-placeholder);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   font-style: italic;
 }
 
 .placeholder-icon {
-  width: 44px;
-  height: 44px;
-  border: 2.5px dashed var(--clr-placeholder);
+  width: 36px;
+  height: 36px;
+  border: 2px dashed var(--clr-placeholder);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 16px;
   font-style: normal;
+}
+
+/*  RG4 : adaptations mobile  */
+@media (max-width: 640px) {
+  .game-page {
+    /* Sur très petit écran, on laisse défiler plutôt que tout comprimer */
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .game-zone {
+    margin: 4px 6px;
+    padding: 8px 10px;
+    min-height: 140px;
+  }
+
+  .card-img {
+    width: 52px;
+    height: 52px;
+  }
+
+  .card-name {
+    font-size: 12px;
+  }
+}
+
+/*  Desktop : tailles plus généreuses  */
+@media (min-width: 768px) {
+  .game-zone {
+    margin: 8px 12px;
+    padding: 12px 16px;
+  }
+
+  .card-img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .card-name {
+    font-size: 15px;
+  }
+  .zone-label {
+    font-size: 13px;
+  }
+  .score {
+    font-size: 13px;
+  }
 }
 </style>
